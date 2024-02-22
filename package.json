@@ -16,6 +16,7 @@
         "dev": "vite"
     },
     "devDependencies": {
-        "@vitejs/plugin-react-swc": "^3.6.0"
+        "@vitejs/plugin-react-swc": "^3.6.0",
+        "json-server": "^1.0.0-alpha.23"
     }
 }

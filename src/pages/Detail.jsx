@@ -1,36 +1,48 @@
 import Avatar from '../components/common/Avatar';
 import Button from '../components/common/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { getFormattedDate } from '../util/date';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteLetter, editLetter } from '../store/modules/letterSlice';
+import { deleteLetterHandler, editLetterHandler, getletters } from '../store/modules/letterSlice';
 
 export default function Detail() {
     const dispatch = useDispatch();
-    const letters = useSelector((state) => state.letterSlice);
+    const { letters, isLoading } = useSelector((state) => state.letterSlice);
+    const myUserId = useSelector((state) => state.authSlice.userId);
 
     const [isEditing, setIsEditing] = useState(false);
     const [editingText, setEditingText] = useState('');
     const navigate = useNavigate();
     const { id } = useParams();
-    const { avatar, nickname, createdAt, writedTo, content } = letters.find((letter) => letter.id === id);
 
     const onDeleteBtn = () => {
         const answer = window.confirm('정말로 삭제하시겠습니까?');
         if (!answer) return;
 
-        dispatch(deleteLetter(id));
+        dispatch(deleteLetterHandler(id));
         navigate('/');
     };
     const onEditDone = () => {
         if (!editingText) return alert('수정사항이 없습니다.');
 
-        dispatch(editLetter({ id, editingText }));
+        dispatch(editLetterHandler({ id, editingText }));
         setIsEditing(false);
         setEditingText('');
     };
+
+    useEffect(() => {
+        dispatch(getletters());
+    }, [dispatch]);
+
+    if (isLoading) {
+        return <p>Loading...</p>;
+    }
+
+    const { avatar, nickname, createdAt, writedTo, content, userId } = letters.find((letter) => letter.id === id);
+    const isMine = myUserId === userId;
+
     return (
         <Container>
             <Link to="/">
@@ -63,10 +75,12 @@ export default function Detail() {
                 ) : (
                     <>
                         <Content>{content}</Content>
-                        <BtnsWrapper>
-                            <Button text="수정" onClick={() => setIsEditing(true)} />
-                            <Button text="삭제" onClick={onDeleteBtn} />
-                        </BtnsWrapper>
+                        {isMine && (
+                            <BtnsWrapper>
+                                <Button text="수정" onClick={() => setIsEditing(true)} />
+                                <Button text="삭제" onClick={onDeleteBtn} />
+                            </BtnsWrapper>
+                        )}
                     </>
                 )}
             </DetailWrapper>

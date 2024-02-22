@@ -12,4 +12,5 @@ const store = configureStore({
 // const rootReducer = combineReducers({ letters, member });
 // const store = createStore(rootReducer, devToolsEnhancer());
 
-export default store;
+const getStore = () => store;
+export default getStore;

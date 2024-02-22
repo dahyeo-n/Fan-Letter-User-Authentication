@@ -4,6 +4,7 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Profile from '../pages/Profile';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from '../components/Layout';
 
 export default function Router() {
     // const [isLogin, setLogin] = useState(false);
@@ -14,13 +15,13 @@ export default function Router() {
         <BrowserRouter>
             <Routes>
                 {isLogin ? (
-                    <>
+                    <Route element={<Layout />}>
                         {/* withAuthorization: 로그인 된 상태에서 접근할 수 있는 페이지는 true, 로그인 상관 없이 접근 가능한 페이지는 false로 설정 */}
                         <Route path="/" element={<Home />} />
                         <Route path="/detail/:id" element={<Detail />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="*" element={<Navigate replace to="/" />} />
-                    </>
+                    </Route>
                 ) : (
                     <>
                         {/* withAuthorization: 로그인 된 상태에서 접근할 수 있는 페이지는 true, 로그인 상관 없이 접근 가능한 페이지는 false로 설정 */}

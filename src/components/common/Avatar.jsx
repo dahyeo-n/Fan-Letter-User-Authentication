@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-// import defaultUser from "assets/defaultUser.png";
+import defaultUser from '../assets/defaultUser.png';
 
 export default function Avatar({ src, size }) {
     return (

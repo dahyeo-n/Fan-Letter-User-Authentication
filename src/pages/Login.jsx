@@ -2,9 +2,10 @@ import styled from 'styled-components';
 import Button from '../components/common/Button';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { login } from '../store/modules/authSlice';
-import { toast } from 'react-toastify';
+import { loginHandler } from '../store/modules/authSlice';
 import useForm from '../hooks/useForm';
+// import axios from 'axios';
+import { authApi } from '../api';
 
 function Login() {
     const dispatch = useDispatch();
@@ -22,19 +23,44 @@ function Login() {
     //    setFormState((prev) => ({ ...prev, [name]: value }));
     // };
 
-    const onSubmitHandler = (e) => {
+    const onSubmitHandler = async (e) => {
         // 새로고침 막음
         e.preventDefault();
         console.log('제출');
         if (isLoginMode) {
+            dispatch(loginHandler({ id, password }));
             // 로그인 처리
-            dispatch(login());
-            alert('성공적으로 로그인되었습니다.');
+            // try {
+            //     // const { data } = await axios.post('https://moneyfulpublicpolicy.co.kr/login', {
+            //     const { data } = await authApi.post('/login?expiresIn=10s', {
+            //         id,
+            //         password,
+            //     });
+            //     const { accessToken, avatar, nickname, userId } = data;
+            //     if (data.success) {
+            //         // localStorage.setItem('accessToken'), data.accessToken;
+            //         dispatch(login(accessToken, avatar, nickname, userId));
+            //         alert('성공적으로 로그인되었습니다.');
+            //     }
+            // } catch (err) {
+            //     alert(err.response.data.message);
+            // }
         } else {
-            // 회원가입
-            setIsLoginMode(true);
-            resetForm();
-            alert('회원가입 하셨습니다.');
+            // 회원가입 처리
+            try {
+                const { data } = await authApi.post('/register', {
+                    id,
+                    password,
+                    nickname,
+                });
+                if (data.success) {
+                    setIsLoginMode(true);
+                    resetForm();
+                    alert('회원가입 하셨습니다.');
+                }
+            } catch (err) {
+                alert(err.response.data.message);
+            }
         }
     };
 
